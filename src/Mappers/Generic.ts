@@ -12,6 +12,7 @@ export interface GenericMap {
     args?: {};
 }
 
+// GenericMap が再起的につながる Map
 export interface RecursiveMap {
     [key: string]: RecursiveMap | GenericMap;
 }
@@ -27,18 +28,19 @@ export abstract class GenericMapper {
         this.specialKeys = specialKeys;
     }
 
+    // node が末端かどうか -> node かつ GenericMap.keys が文字列 'string' なら true
     private static isMapLeaf(node: RecursiveMap | GenericMap): boolean {
         return node && typeof (node as GenericMap).keys === 'string';
     }
 
     protected map(joinedKeys: string, args?: {}): void | GenericMap {
-        const map = {
+        const map = { // GenericMap の I/F を満たす
             keys: joinedKeys,
             args: args || undefined,
         };
 
         let node: RecursiveMap | GenericMap = this.root;
-        const keys = joinedKeys.split(GenericMapper.separator);
+        const keys = joinedKeys.split(GenericMapper.separator); // 空白で分割
 
         keys.forEach((key, index) => {
             this.specialKeys.forEach(specialKey => {

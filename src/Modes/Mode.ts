@@ -6,6 +6,7 @@ import {CommandMap, CommandMapper} from '../Mappers/Command';
 
 export enum ModeID {NORMAL, VISUAL, VISUAL_LINE, INSERT}
 
+// amVim の各モードが満たすべき抽象クラス
 export abstract class Mode {
 
     id: ModeID;
@@ -21,6 +22,7 @@ export abstract class Mode {
         this.updateStatusBar();
     }
 
+    // 下部ステータスバーの `-- INSERT --` とかの部分
     private updateStatusBar(message?: string): void {
         let status = `-- ${this.name} --`;
 
@@ -48,6 +50,8 @@ export abstract class Mode {
         this.pendings = [];
     }
 
+    // 入力されたキーの処理
+    // 各モードのなにかのコマンドに該当するかを確認する処理がある
     input(key: string, args: {} = {}): MatchResultKind {
         let inputs: string[];
 
@@ -61,16 +65,19 @@ export abstract class Mode {
 
         const {kind, map} = this.mapper.match(inputs);
 
+        // これ以上入力されても該当するコマンドはないので失敗
         if (kind === MatchResultKind.FAILED) {
             this.updateStatusBar();
             this.clearInputs();
         }
+        // なんらかのコマンドが見つかった
         else if (kind === MatchResultKind.FOUND) {
             this.updateStatusBar();
             this.clearInputs();
-            this.pushCommandMap(map!);
-            this.execute();
+            this.pushCommandMap(map!); // キューにコマンドをpush
+            this.execute();  // ここでモードに登録されたコマンドを実行する
         }
+        // さらなる入力を待つ
         else if (kind === MatchResultKind.WAITING) {
             this.updateStatusBar(`${this.inputs.join(' ')} and...`);
         }
@@ -111,6 +118,7 @@ export abstract class Mode {
      */
     onDidRecordFinish(recordedCommandMaps: CommandMap[], lastModeID: ModeID): void {}
 
+    // コマンドを実行する
     protected execute(): void {
         if (this.executing) {
             return;

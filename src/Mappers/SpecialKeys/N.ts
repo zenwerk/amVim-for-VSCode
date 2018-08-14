@@ -5,11 +5,15 @@ export class SpecialKeyN implements SpecialKeyCommon {
 
     indicator = '{N}';
 
+    // 衝突の正規表現
     private conflictRegExp = /^[1-9]|\{char\}$/;
 
+    // 衝突しているものをunmapしている?
+    // 何に衝突しているのか？
     unmapConflicts(node: RecursiveMap, keyToMap: string): void {
         if (keyToMap === this.indicator) {
             Object.getOwnPropertyNames(node).forEach(key => {
+                // 正規表現にマッチしたら node[key] の要素を削除する
                 this.conflictRegExp.test(key) && delete node[key];
             });
         }
@@ -19,6 +23,7 @@ export class SpecialKeyN implements SpecialKeyCommon {
         }
     }
 
+    // 特殊キーにマッチしているか調べている？
     matchSpecial(
         inputs: string[],
         additionalArgs: {[key: string]: any},

@@ -6,8 +6,9 @@ export interface SpecialKeyMatchResult {
     matchedCount: number;
 }
 
+// 特殊キー入力の共通I/F(?)
 export interface SpecialKeyCommon {
-    indicator: string;
+    indicator: string; // 指示者(?)
 
     unmapConflicts(node: RecursiveMap, keyToMap: string): void;
     matchSpecial(

@@ -18,6 +18,7 @@ export interface CommandMap extends GenericMap {
 export class CommandMapper extends GenericMapper {
 
     constructor() {
+        // SpecialKey を this.specialKeys に登録
         super([
             new SpecialKeyN(),
             new SpecialKeyMotion(),
